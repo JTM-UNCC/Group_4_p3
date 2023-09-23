@@ -41,6 +41,7 @@ class DatePicker{
     createTable(){
 
         const table = document.createElement('table');
+        table.appendChild(this.createCaption(this.date));
         const header = this.createHeader();
         table.appendChild(header);
         const body = this.createBody()
@@ -93,7 +94,7 @@ class DatePicker{
         const body = document.createElement("tbody");
 
         for(let i = 0; i < 7; i++){
-            if (i > 4 && tempDate.getMonth() !== month){
+            if (i >= 4 && tempDate.getMonth() !== month){
                 break;
             }
 
@@ -118,7 +119,9 @@ class DatePicker{
             const cell = document.createElement(cellType);
             cell.appendChild(document.createTextNode(values[val].value));
             row.appendChild(cell);
+            if(values[val].active) cell.setAttribute('class', 'active');
             if (values[val].active && cellType !== 'th'){
+
                 if(values[val].value === this.date.getDate()){
                     cell.setAttribute('class', 'selected');
                     this.selectedDate = cell;
@@ -132,6 +135,9 @@ class DatePicker{
                     );
                 });
             }
+            else if (values[val].active === false && cellType !== 'th'){
+                cell.setAttribute('class', 'inactive');
+            }
 
         }
         return row;
@@ -141,7 +147,7 @@ class DatePicker{
 
     createHeader(){
         const head = document.createElement("thead");
-        head.appendChild(this.createCaption(this.date));
+
         const row1 = this.getRow(this.header1(), 'th');
         row1.children[0].addEventListener('click', () => {
             this.render(new Date(this.date.getFullYear(), this.date.getMonth() - 1, 1))

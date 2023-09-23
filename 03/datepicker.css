@@ -1,3 +1,34 @@
 .selected{
-    background-color: blue;
+    background-color: lightgreen;
+    border-radius: 45%;
+}
+
+table * {
+    text-align: center;
+    font-size: 15pt;
+    font-family: Tahoma, serif;
+
+}
+table td, table th {
+
+}
+.active:hover{
+    cursor:pointer;
+    background-color: lightblue;
+    border-radius: 25%;
+}
+
+table {
+    border: 1px solid gray;
+    border-radius: 4px;
+    background-color: lightgoldenrodyellow;
+    table-layout: fixed;
+}
+
+.inactive{
+    color: gray;
+
+}
+.inactive:hover{
+    cursor: not-allowed;
 }
