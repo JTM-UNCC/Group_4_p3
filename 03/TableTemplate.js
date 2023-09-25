@@ -1,35 +1,39 @@
 'use strict';
+
 class TableTemplate {
-    static fillIn(id, dictionary, columnName){
-        console.log(columnName);
-        const table = document.getElementById(id);
-        if (columnName === undefined) {
-            const templateProcessor = new TemplateProcessor(table.innerHTML);
-            table.innerHTML = templateProcessor.fillIn(dictionary);
-        } else {
-            const headerRow = table.rows[0];
-            let templateProcessor = new TemplateProcessor(headerRow.innerHTML);
-            headerRow.innerHTML = templateProcessor.fillIn(dictionary);
-            let processingindex = null;
-            for(let index = 0; index < headerRow.cells.length; index++){
-                if (headerRow.cells[index].innerHTML === columnName){
-                    processingindex = index;
+    static fillIn(tableId, dictionary, columnName = null) {
+        const table = document.getElementById(tableId);
+
+        const headerRow = table.rows[0];
+        for (let i = 0; i < headerRow.cells.length; i++) {
+            const cell = headerRow.cells[i];
+            cell.textContent = this.processTemplate(cell.textContent, dictionary);
+        }
+
+        let columnIndex = -1;
+        if (columnName) {
+            for (let i = 0; i < headerRow.cells.length; i++) {
+                if (headerRow.cells[i].textContent === columnName) {
+                    columnIndex = i;
                     break;
                 }
             }
-            if (processingindex !== null){
-                for(let index = 1; index < table.rows.length; index++){
-                    const row = table.rows[index];
-                    for(let jndex = 0; jndex < row.cells.length; jndex++){
-                        if (jndex === processingindex){
-                            const cell = row.cells[jndex];
-                            templateProcessor = new TemplateProcessor(cell.innerHTML);
-                            cell.innerHTML = templateProcessor.fillIn(dictionary);
-                        }
-                    }
-                }
+        }
+
+        if (columnIndex !== -1) {
+            for (let i = 1; i < table.rows.length; i++) {
+                const cell = table.rows[i].cells[columnIndex];
+                cell.textContent = this.processTemplate(cell.textContent, dictionary);
             }
         }
-        table.style.visibility = "visible";
+
+        table.style.visibility = 'visible';
+    }
+
+    static processTemplate(text, dictionary) {
+        return text.replace(/{{(.*?)}}/g, (match, property) => {
+            const value = dictionary[property];
+            return value !== undefined ? value : '';
+        });
     }
 }
