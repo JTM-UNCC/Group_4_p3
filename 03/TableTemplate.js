@@ -1,4 +1,4 @@
-
+'use strict';
 class TableTemplate {
     static fillIn(id, dictionary, columnName){
         console.log(columnName);
