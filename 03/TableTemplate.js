@@ -1,4 +1,3 @@
-'use strict';
 
 class TableTemplate {
     static fillIn(id, dictionary, columnName){
