@@ -4,11 +4,6 @@ class TableTemplate {
     static fillIn(tableId, dictionary, columnName = null) {
         const table = document.getElementById(tableId);
 
-        if (!table) {
-            console.error(`Table with id "${tableId}" not found.`);
-            return;
-        }
-
         const headerRow = table.rows[0];
         for (let i = 0; i < headerRow.cells.length; i++) {
             const cell = headerRow.cells[i];
