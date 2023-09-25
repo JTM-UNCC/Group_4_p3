@@ -1,35 +1,60 @@
-
 class TableTemplate {
-    static fillIn(id, dictionary, columnName){
-        console.log(columnName);
-        const table = document.getElementById(id);
-        if (columnName === undefined) {
-            const templateProcessor = new TemplateProcessor(table.innerHTML);
-            table.innerHTML = templateProcessor.fillIn(dictionary);
-        } else {
-            const headerRow = table.rows[0];
-            let templateProcessor = new TemplateProcessor(headerRow.innerHTML);
-            headerRow.innerHTML = templateProcessor.fillIn(dictionary);
-            let processingindex = null;
-            for(let index = 0; index < headerRow.cells.length; index++){
-                if (headerRow.cells[index].innerHTML === columnName){
-                    processingindex = index;
-                    break;
+    static fillIn(id, dict, columnName) {
+        const tableElem = document.getElementById(id);
+        if (!tableElem) {
+            console.error(`Table with id '${id}' not found.`);
+            return;
+        }
+
+        const headerElem = tableElem.rows[0];
+
+        let match = false;
+        let colNum;
+        const numCols = headerElem.cells.length;
+
+        for (let j = 0; j < numCols; j++) {
+            const currColName = headerElem.cells[j].innerHTML;
+            const filledCurrColName = TableTemplate.processTemplate(currColName, dict);
+
+            if (filledCurrColName === columnName) {
+                match = true;
+                colNum = j;
+            }
+
+            headerElem.cells[j].innerHTML = filledCurrColName;
+        }
+
+        const numRows = tableElem.rows.length;
+
+        if (!columnName) {
+            for (let i = 1; i < numRows; i++) {
+                for (let j = 0; j < numCols; j++) {
+                    const currCell = tableElem.rows[i].cells[j];
+                    currCell.innerHTML = TableTemplate.processTemplate(currCell.innerHTML, dict);
                 }
             }
-            if (processingindex !== null){
-                for(let index = 1; index < table.rows.length; index++){
-                    const row = table.rows[index];
-                    for(let jndex = 0; jndex < row.cells.length; jndex++){
-                        if (jndex === processingindex){
-                            const cell = row.cells[jndex];
-                            templateProcessor = new TemplateProcessor(cell.innerHTML);
-                            cell.innerHTML = templateProcessor.fillIn(dictionary);
-                        }
-                    }
-                }
+            return;
+        }
+
+        if (!match) {
+            return;
+        }
+
+        if (columnName) {
+            for (let i = 1; i < numRows; i++) {
+                const currCell = tableElem.rows[i].cells[colNum];
+                currCell.innerHTML = TableTemplate.processTemplate(currCell.innerHTML, dict);
             }
         }
-        table.style.visibility = "visible";
+    }
+
+    static processTemplate(template, dict) {
+        return template.replace(/{{(.*?)}}/g, (match, property) => {
+            if (dict.hasOwnProperty(property)) {
+                return dict[property];
+            } else {
+                return '';
+            }
+        });
     }
 }
